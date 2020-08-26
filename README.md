@@ -1,122 +1,64 @@
 # python-dogs-fact
 
-A Python module to restrieve facts from a CSV data set.
+A Python module to retrieve facts from a CSV data set.
+
+This module responds with a sorted fact about dogs, with data learned from 
+[Purina](
+https://www.purina.co.uk/dogs/behaviour-and-training/understanding-dog-behaviours/amazing-dog-facts), 
+[Drake Center Vet](
+https://www.thedrakecenter.com/services/dogs/blog/23-amazing-facts-about-dogs-you-probably-didnt-know), 
+[Pet Assure](https://www.petassure.com/new-newsletters/50-fascinating-facts-about-dogs/) and 
+[Petfinder](https://www.petfinder.com/dogs/bringing-a-dog-home/facts-about-new-dog/).
+
 
 &nbsp;  
 &nbsp;  
-## README Map
+## Retrive from command line
 
-- Start with [Set-up and install](#set-up-and-install).
-- To run locally, go to [Run from command line](#run-from-command-line).
-- To use the main class, skip to [The main class](#the-main-class).
-- For automatic tests, skip to [Automatic tests](#automatic-tests).
-- If you prefer Docker, go to [Containerise with Dockerfile](#containerise-with-the-dockerfile).
-- To run Docker Compose, skip to [Docker Compose](#run-the-docker-compose) instructions.
-- About logs, please move to the corresponding topic, [Logs](#logs).
-- Instructions on advanced/technical documentation, go to [Documentation](#documentation).
-- Or click to skip to the [To do](#to-do) list.
+    $ python -m dogs_fact | python -m json.tool
 
 
-## Set-up and install
-_Note: To run automatically via Docker, Docker Compose or run automatic tests using Makefile, skip this chapter._  
-_Note: I recommend using [virtualenv](https://realpython.com/python-virtual-environments-a-primer/) to run py manually._
+## From Python interpreter
 
-Install the requirements:
-
-    $ python3 -m pip install -r requirements.txt
-
-Please check the [config file](config.py) to personalise variables as needed.
-
-_Note: The [config file](config.py) should not be in a public repo, but once there are no secret keys in this project, the file was published to facilitate the instantiation. Normally, copying and editing [config template](config.py.tpl) would be recommended._
-
-<!--
-Rename/copy the configuration template file [proxy/config.py.tpl](proxy/config.py.tpl) to the actual config file as proxy/config.py. For security purposes, only the template is in this repo.  
-
-    $ cp proxy/config.py.tpl proxy/config.py  
-
-> **or**, if sed is available:
-
-    $ sed 's/secret-key/place-your-secret-key-here/' proxy/config.py.tpl > proxy/config.py
-
-Note: A generic SECRET\_KEY is in the config file, so **edit config.py with your prefered secret key**.
--->
-
-
-## Run from command line
-_Note: By default, the proxy runs on port 5000. This can be changed in the [config file](config.py)._
-
-From the project's root directory, please run the following command and follow instructions:
-
-    $ python3 -m APP
-
-At this point, we should be able to browse: http://localhost:5000/  
-Please remember to hit Ctrl+c to stop the web server when done.
-
-
-## The main class
-_Note: to run from Python console, please refer to [Set-up and install](#set-up-and-install) first._
-
-With the python console and the [APP class](APP/__init__.py), we can get things running:
-
-    $ python3
-    >>> from APP import APP
-    >>> c = APP()
-    >>> c.main_def()
+    $ python
+    >>>
+    import dogs_fact
+    dogs_fact.get_fact()
 
 
 ## Automatic tests
-Python tests are available using unittest via Makefile or manually.  
-
-_Note: to run tests manually, please refer to [Set-up and install](#set-up-and-install) first._  
-_Note: to run tests using Makefile, virtualenv must be already installed._  
-_Note: depending on how the app is started, it may require ` sudo chmod o+w logs/* `._
-
-Python tests are available manually or using Makefile.
+Python tests are available using unittest manually or via Makefile.  
 
 - Run ` python3 -m unittest tests/test_* `.
 - Or use make as in ` make test ` to setup, run the tests and clean up.
 
 
-## Containerise with the Dockerfile
-_I assume that you have docker engine running. If not, please see [Get Docker](https://docs.docker.com/get-docker/)._
-
-If you rather run the proxy in a single container, run:
-
-    $ docker run --rm -d -p 5000:5000 --name proxy $(docker build -f Dockerfile -t proxy . -q)
-
-To know IP and Port to the containerised app:
-
-    $ docker inspect proxy | grep -e IPAddr.*[0-9] -e HostPort | sed 's/[^0-9\.]//g' | sort -u
-
-After this, we should be able to browse: http://\<container IP\>:5000/  
-
-To stop container and clean image, use:
-
-    $ docker stop proxy && docker image rm proxy
-
-
-## Run the Docker compose
-_I assume that you have docker compose installed. If not, please see [Install Docker Compose](https://docs.docker.com/compose/install/)._
+## Run Docker compose
+_If not installed, please [Install Docker Compose](https://docs.docker.com/compose/install/)._
 
 There are Makefile rules to simplify this option. See the list of commands:
 
 - ` $ make ` to build and run (up) the application.
-    - or run `$ make build; make run ` _(note: run already calls build)_.
-- ` $ make stop ` and ` make start ` to start the container.
-- ` $ make rm ` to remove compose service, container, image.
+    - or run `$ make compose && make run ` _(note: run calls compose)_.
+- ` $ make stop ` and ` make start ` to restart the container.
 
-The default HTTP proxy PORT is 5000 and set in [.env](.env). The port can be changed:
+We should be now able to browse: http://localhost:5000/  
 
-    $ HTTP_PORT=8080 make up
+_Note: the default 5000 http port can be changed in [.env](.env) or running:_
+
+    $ HTTP_PORT=8080 make
 
 
-## Logs
-By default, logs are recorded in the 'logs' directory in the project's root. However,
-if you [Containerise](#containerise-with-the-dockerfile) the app, 
-logs will be inside the container. And if you [Docker Compose](#run-the-docker-compose),
-the container will use the hosts' dirs as in [Run from command line](#run-from-command-line).
+## Clean up
+After running command line, using interpreter or running tests, execute:
 
-Please see [docs/logs](docs/logs) if you wish to access samples of the generated logs.
+    $ make clean
+
+To remove container and built image, run:
+
+    $ make rm
+
+_(note: make rm also calls make clean)_
 
 
 ## Documentation
