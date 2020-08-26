@@ -1,8 +1,26 @@
 #! /usr/bin/env python3
 '''
 Python Dogs' Fact package
-'''
 
+Python package to retrieve facts from a CSV data set.
+This package responds with a sorted fact about dogs, with data learned from
+Purina, Drake Center Vet, Pet Assure and Petfinder.
+
+See: https://github.com/nandoabreu/py-dogs-fact
+
+
+Build and run:
+    make compose && make run
+    (then run wget -q -S -O http://localhost:5000/)
+
+Usage from command line:
+    python -m dogs_fact | python -m json.tool
+
+Usage as imported module:
+    import dogs_fact
+    dogs_fact.get_fact()
+
+'''
 import os
 import random
 import config as cfg
