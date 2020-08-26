@@ -1,9 +1,9 @@
 #! /usr/bin/env python3
 '''
-Python Dogs' Fact package
+Python Dogs' Fact module
 
-Python package to retrieve facts from a CSV data set.
-This package responds with a sorted fact about dogs, with data learned from
+Python module to retrieve facts from a CSV data set.
+This module responds with a sorted fact about dogs, with data learned from
 Purina, Drake Center Vet, Pet Assure and Petfinder.
 
 See: https://github.com/nandoabreu/py-dogs-fact
