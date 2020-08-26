@@ -13,8 +13,8 @@ run: compose
 	@echo "Ready."
 
 compose:
-	@echo "Building compose image, please wait..."
-	docker-compose build --force-rm --pull | grep Step #--quiet
+	@echo "Building compose image, please wait around 60 seconds..."
+	docker-compose build --force-rm --pull --quiet
 	@echo "Built."
 
 start:
