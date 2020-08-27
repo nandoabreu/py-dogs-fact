@@ -4,18 +4,25 @@ CONTAINER := $(shell docker ps --all --quiet --filter="name=$(NAME)")
 #CONTAINER := $(or ${CONTAINER},${CONTAINER},NO CONTAINER. To create: make)
 
 
-.PHONY: clean test run stop start compose rm
+.PHONY: clean test run scale stop start compose rm
 
-run: compose
-	@echo "Running compose (up)..."
+run: #compose
+	@echo "Building and running compose (up)..."
+	docker-compose build --force-rm --pull | grep Step #--quiet
 	docker-compose up --remove-orphans -d
 	docker ps --filter="name=$(NAME)"
 	@echo "Ready."
 
-compose:
-	@echo "Building compose image, please wait around 60 seconds..."
-	docker-compose build --force-rm --pull --quiet
-	@echo "Built."
+scale: #compose
+	@echo "Building and running compose (up) with 3 instances..."
+	docker-compose -f docker-compose-scale.yml build --force-rm --pull | grep Step #--quiet
+	docker-compose -f docker-compose-scale.yml up -d --scale app=2
+	@echo "Ready."
+
+#compose:
+#	@echo "Building compose image, please wait around 60 seconds..."
+#	docker-compose build --force-rm --pull --quiet
+#	@echo "Built."
 
 start:
 	@echo "Starting container..."
