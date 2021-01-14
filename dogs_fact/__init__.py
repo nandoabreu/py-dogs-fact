@@ -22,58 +22,44 @@ Usage as imported module:
 
 '''
 import os
+import csv
 import random
 import config as cfg
 
 
 _facts_file = os.path.join(cfg.data_dir, cfg.facts_csv)
 _sources_file = os.path.join(cfg.data_dir, cfg.sources_csv)
+
 if \
     not os.path.isfile(_facts_file) or \
     not os.path.isfile(_sources_file): 
         raise FileNotFoundError
 
-def _load_data(csv_file, limit=None, rand=False) -> dict:
-    with open(csv_file) as file:
-        lines = file.read().splitlines()
+def _load_data(csv_file) -> list:
+    res = []
 
-        headers = tuple( h.lower() for h in lines[0].split(';') )
-        del lines[0] # remove csv header
+    with open(csv_file) as f:
+        _csv = csv.DictReader(f, delimiter=';')
+        for data in _csv:
+            res.append(data)
 
-        if headers[0] == 'id':
-            has_id = True
-            hstart = 0 # keep id in dict to validate
-        else:
-            has_id = False
-            hstart = 0
-
-        size = len(lines)
-        limit = min(limit, size) if limit and limit > 0 else size
-        if rand: lines = random.sample(lines, limit)
-
-        res = {}
-        row_id = -1
-        for line in lines:
-            line = line.split(';')
-
-            if has_id:
-                row_id = line[0]
-            else:
-                row_id += 1
-
-            res[row_id] = {}
-
-            for i in range(hstart, len(headers)):
-                key = headers[i]
-                res[row_id][key] = line[i]
-
-        return res
+    return res
 
 
 _sources = _load_data(_sources_file)
 
-def get_fact():
-    _fact = _load_data(_facts_file, limit=1, rand=True)
-    _fact[0]['source'] = _sources[_fact[0]['source']]
-    return _fact
+def get_fact(limit=1, rand=True):
+    res = {'facts': [], 'node': 'N/A'}
+
+    _data = _load_data(_facts_file)
+    if _data:
+        limit = min(limit, len(_data))
+
+        if rand: res['facts'] = random.sample(_data, limit)
+        else: res['facts'] = _data[:limit]
+
+#    for fact in res['facts']:
+#        fact['SOURCE'] = _sources[int(fact['SOURCE'])]
+
+    return res
 
